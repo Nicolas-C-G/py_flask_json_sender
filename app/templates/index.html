@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON Sender</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4">JSON Sender</h1>
+        <form id="jsonForm">
+            <div class="form-group">
+                <label for="url">URL:</label>
+                <input type="text" class="form-control" id="url" name="url" placeholder="http://example.com/endpoint" required>
+            </div>
+            <div class="form-group mt-3">
+                <label for="method">HTTP Method:</label>
+                <select class="form-control" id="method" name="method">
+                    <option value="POST">POST</option>
+                    <option value="GET">GET</option>
+                    <option value="PUT">PUT</option>
+                    <option value="DELETE">DELETE</option>
+                </select>
+            </div>
+            <div class="form-group mt-3">
+                <label for="json_data">JSON Data:</label>
+                <textarea class="form-control" id="json_data" name="json_data" rows="10" required>{ "key1": "value1", "key2": "value2" }</textarea>
+            </div>
+            <button type="submit" class="btn btn-primary mt-3">Send JSON</button>
+        </form>
+        <div class="mt-3">
+            <h3>Response</h3>
+            <pre id="response"></pre>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('jsonForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const url = document.getElementById('url').value;
+            const method = document.getElementById('method').value;
+            const json_data = document.getElementById('json_data').value;
+            
+            fetch('/send_json', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: new URLSearchParams({
+                    'url': url,
+                    'method': method,
+                    'json_data': json_data
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('response').textContent = JSON.stringify(data, null, 2);
+            })
+            .catch(error => {
+                document.getElementById('response').textContent = 'Error: ' + error;
+            });
+        });
+    </script>
+</body>
+</html>
